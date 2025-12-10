@@ -1,0 +1,7 @@
+sora in pruth-mf5cocr eastus2
+pruth-mgqkvj16-swedencentral empty for gpt 5 and sora but has dalle3  
+pruth-mgql2n3x-australiaeast empty for all
+finalmini has gpt 5 mini
+Flask>=3.0
+gunicorn
+flask-cors
