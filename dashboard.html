@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Metrics Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<header>AI Metrics Dashboard</header>
+<nav>
+    <a href="/">Home</a>
+    <a href="/chat">ChatGPT</a>
+    <a href="/dalle">DALL·E</a>
+    <a href="/video">Sora Video</a>
+</nav>
+
+<div class="container">
+    <h2>Metrics Comparison</h2>
+
+    <div class="metrics-card">
+        <h3>Explanation of Metrics</h3>
+        <ul style="text-align:left;">
+            <li><strong>Latency:</strong> Time taken to get the response (Lower is better)</li>
+            <li><strong>Efficiency:</strong> Performance relative to latency (Higher is better)</li>
+            <li><strong>Throughput:</strong> Requests per second handled (Higher is better)</li>
+            <li><strong>Response Size:</strong> Size of returned data in KB</li>
+        </ul>
+    </div>
+
+    <canvas id="latencyChart" style="margin-top:30px;"></canvas>
+    <canvas id="efficiencyChart" style="margin-top:30px;"></canvas>
+    <canvas id="throughputChart" style="margin-top:30px;"></canvas>
+    <canvas id="responseSizeChart" style="margin-top:30px;"></canvas>
+</div>
+
+<script>
+async function fetchMetrics(){
+    const resp = await fetch('/get-dashboard-data');
+    const data = await resp.json();
+    const labels = ['ChatGPT', 'DALL·E', 'Sora Video'];
+    const latency = [data.chat.latency, data.dalle.latency, data.video.latency];
+    const efficiency = [data.chat.efficiency, data.dalle.efficiency, data.video.efficiency];
+    const throughput = [data.chat.throughput, data.dalle.throughput, data.video.throughput];
+    const responseSize = [data.chat.response_size, data.dalle.response_size, data.video.response_size];
+
+    new Chart(document.getElementById('latencyChart'), {
+        type:'bar',
+        data:{labels, datasets:[{label:'Latency (s)', data:latency, backgroundColor:'#4da6ff'}]},
+        options:{responsive:true, plugins:{legend:{display:false}}}
+    });
+
+    new Chart(document.getElementById('efficiencyChart'), {
+        type:'bar',
+        data:{labels, datasets:[{label:'Efficiency', data:efficiency, backgroundColor:'#3399ff'}]},
+        options:{responsive:true, plugins:{legend:{display:false}}}
+    });
+
+    new Chart(document.getElementById('throughputChart'), {
+        type:'bar',
+        data:{labels, datasets:[{label:'Throughput (rps)', data:throughput, backgroundColor:'#2673cc'}]},
+        options:{responsive:true, plugins:{legend:{display:false}}}
+    });
+
+    new Chart(document.getElementById('responseSizeChart'), {
+        type:'bar',
+        data:{labels, datasets:[{label:'Response Size (KB)', data:responseSize, backgroundColor:'#1f4d99'}]},
+        options:{responsive:true, plugins:{legend:{display:false}}}
+    });
+}
+
+fetchMetrics();
+</script>
+</body>
+</html>
